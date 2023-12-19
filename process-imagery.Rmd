@@ -107,9 +107,9 @@ segment_parameters <- color_out |>
   rename(inpath = outpath) |>
 
 segment_parameters <- dplyr::tibble(inpath = file_paths[[1]]) |>
-  full_join(segment_spatial, by = character()) |> 
-  full_join(segment_range, by = character()) |>
-  full_join(segment_denisty, by = character())
+  cross_join(segment_spatial) |> 
+  cross_join(segment_range) |>
+  cross_join(segment_denisty)
 
 segment_out <- segment_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
