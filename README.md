@@ -1,3 +1,3 @@
 # Process photographs
 
-Generic repository to pre-proccess photographs used in various machine learning models.
+Generic repository to pre-process photographs used in  machine learning tasks.
