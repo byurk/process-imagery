@@ -19,7 +19,7 @@ get_color_space <- function(out_path) {
 
 
 color_outpath <- function(inpath, transform) {
-  out_dir <- getFileDirectory(inpath)
+  out_dir <- get_file_directory(inpath)
   out_name <- str_split(transform, "to", simplify=TRUE)[1, 2] |> tolower() |> paste0(".tif")
   return(paste0(out_dir, out_name))
 }
@@ -32,15 +32,15 @@ get_layer_name <- function(im_path) {
 texture_outpath <- function(inpath, window, statistic, layer) {
   out_file_dir <- get_file_directory(inpath)
   
-  file_name_split <- str_split(getFileName(inpath), "\\.", simplify = TRUE)
+  file_name_split <- str_split(get_file_name(inpath), "\\.", simplify = TRUE)
   out_file_name <- paste0(file_name_split[1, 1], "_", statistic, "_L", layer, "_W", window, ".tif")
   
   return(paste0(out_file_dir, out_file_name))
 }
 
-segmentation_outpath <- function(inpath, spatial_radius, range_radius, min_density) {
-  file_name_split <- str_split(getFileName(inpath), "\\.")
+segmentation_outpath <- function(inpath, spatial_radius, spectral_radius, min_density) {
+  file_name_split <- str_split(get_file_name(inpath), "\\.")
   base_name <- file_name_split[[1]][1]
   
-  return(paste0(base_name, "_seg_", spatial_radius, "_", range_radius, "_", min_density, ".tif"))
+  return(paste0(base_name, "_seg_", spatial_radius, "_", spectral_radius, "_", min_density, ".tif"))
 }
