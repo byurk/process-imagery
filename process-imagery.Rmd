@@ -52,7 +52,7 @@ cl <- new_cluster(6) |>
 
 ```{r}
 file_paths <- 
-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 34, 1))) 
+  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 83, 1))) 
 
 #Color Transform Parameters
 color_transforms <- tibble(transform = c("RGBtoLab", "RGBtoYUV","RGBtoHSL"))
@@ -88,7 +88,7 @@ texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
  partition(cl) |>
   mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
-                                                 do_computation = TRUE, over_write = FALSE)) |>
+                                                 do_computation = FALSE, over_write = FALSE)) |>
     collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
@@ -105,7 +105,7 @@ segment_denisty <-tibble(min_density = c(30, 50, 70))
 segment_parameters <- color_out |>
   filter(transform == "RGBtoHSV" | transform == "RGBtoLab") |>
   dplyr::select(outpath) |>
-  rename(inpath = outpath) |>
+  rename(inpath = outpath) 
 
 segment_parameters <- dplyr::tibble(inpath = file_paths[[1]]) |>
   cross_join(segment_spatial) |> 
