@@ -25,6 +25,7 @@ source("src/meanshift-segmentation.R")
 
 ## Set up Cluster
 ```{r}
+
 cl <- new_cluster(6) |>
   cluster_library("tidyverse") |>
   cluster_library("terra") |>
@@ -61,7 +62,7 @@ color_parameters <- file_paths |>
 color_out <- color_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   rowwise() |>
-  mutate(outpath = color_transforms_function(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
+  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
   ungroup() |>
   mutate(outpath_exists = file.exists(outpath))
 color_out
@@ -86,7 +87,7 @@ texture_parameters <- color_out |>
 texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
  partition(cl) |>
-  mutate(outpath = texture_calculations_function(inpath, window, statistic, layer,
+  mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
                                                  do_computation = TRUE, over_write = FALSE)) |>
     collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
@@ -114,7 +115,7 @@ segment_parameters <- dplyr::tibble(inpath = file_paths[[1]]) |>
 segment_out <- segment_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   partition(cl) |>
-  mutate(outpath = image_segmentation_function(inpath, spatial_radius,
+  mutate(outpath = parallel_image_segmentation(inpath, spatial_radius,
                                                range_radius, min_density,
                                                do_computation = FALSE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
