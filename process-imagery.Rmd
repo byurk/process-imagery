@@ -61,7 +61,7 @@ color_parameters <- file_paths |>
 color_out <- color_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   rowwise() |>
-  mutate(outpath = color_transforms_function(inpath, transform, doComp = TRUE, overWrite = FALSE)) |>
+  mutate(outpath = color_transforms_function(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
   ungroup() |>
   mutate(outpath_exists = file.exists(outpath))
 color_out
@@ -87,7 +87,7 @@ texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
  partition(cl) |>
   mutate(outpath = texture_calculations_function(inpath, window, statistic, layer,
-                                                 doComp = TRUE, overWrite = FALSE)) |>
+                                                 do_computation = TRUE, over_write = FALSE)) |>
     collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
@@ -116,7 +116,7 @@ segment_out <- segment_parameters |>
   partition(cl) |>
   mutate(outpath = image_segmentation_function(inpath, spatial_radius,
                                                range_radius, min_density,
-                                               doComp = FALSE, overWrite = FALSE)) |>
+                                               do_computation = FALSE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
   collect()
 segment_out 
