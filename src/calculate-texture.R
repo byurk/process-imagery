@@ -85,11 +85,10 @@ parallel_texture_calculation <- function(inpaths, windows, statistics, layers, d
   do_computation_vector <- rep(do_computation, length(inpaths))
   
   if (!over_write & do_computation) {
-    do_computation_vector <- list(inpaths, windows, statistics, layers) |>
+    do_computation_vector <- !list(inpaths, windows, statistics, layers) |>
       pmap(.f = getTexturePath) |>
       unlist() |>
-      file.exists() |>
-      Negate(identity)
+     ( \(x) !file.exists(x))()
   }
   
   args <- list(inpaths, windows, statistics, layers, do_computation_vector)

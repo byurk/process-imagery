@@ -108,11 +108,10 @@ parallel_color_transforms <- function(inpaths, transforms, do_computation = FALS
   do_computation_vector <- rep(do_computation, length(inpaths))
 
   if(!over_write & do_computation_vector){
-    do_computation_vector <- list(inpaths, transforms) |>
+    do_computation_vector <- !list(inpaths, transforms) |>
       pmap(.f = color_outpath) |>
       unlist() |>
-      file.exists() |>
-      Negate(identity)
+     ( \(x) !file.exists(x))()
   }
   args <- list(inpaths, transforms, do_computation_vector)
   args |>
