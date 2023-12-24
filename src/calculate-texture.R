@@ -88,7 +88,7 @@ parallel_texture_calculation <- function(inpaths, windows, statistics, layers, d
     do_computation_vector <- !list(inpaths, windows, statistics, layers) |>
       pmap(.f = getTexturePath) |>
       unlist() |>
-     ( \(x) !file.exists(x))()
+      (\(x) !file.exists(x))()
   }
   
   args <- list(inpaths, windows, statistics, layers, do_computation_vector)

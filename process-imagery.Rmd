@@ -136,8 +136,6 @@ texture_windows <- tibble(window = c(5L,11L))
 texture_layers <- tibble(layer = c(3L))
 texture_stats <- tibble(statistic = c("contrast"))
 
-
-
 texture_parameters <- color_out |>
   dplyr::select(outpath) |>
   rename(inpath = outpath) |>
