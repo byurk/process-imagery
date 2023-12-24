@@ -39,18 +39,14 @@ parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min
   do_computation_vector <- rep(do_computation, length(inpaths))
   
   if (!over_write & do_computation) {
-    do_computation_vector <-
-      list(inpaths, spatial_radii, range_radii, min_densities) |>
+    
+     out_paths <- list(inpaths, spatial_radii, range_radii, min_densities) |>
       pmap(.f = segmentation_outpath) |>
-      unlist() |>
-      (\(x) !file.exists(x))()
+      unlist() 
+     
+     do_computation_vector <- !file.exists(out_paths)
   }
-  args <-
-    list(inpaths,
-         spatial_radii,
-         range_radii,
-         min_densities,
-         do_computation_vector)
+  args <- list(inpaths, spatial_radii, range_radii, min_densities, do_computation_vector)
   args |>
     pmap(.f = segment) |>
     unlist()

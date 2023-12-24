@@ -48,8 +48,9 @@ texture_outpath <- function(inpath, window, statistic, layer) {
 }
 
 segmentation_outpath <- function(inpath, spatial_radius, spectral_radius, min_density) {
+  out_file_dir <- get_file_directory(inpath)
   file_name_split <- str_split(get_file_name(inpath), "\\.")
   base_name <- file_name_split[[1]][1]
   
-  return(paste0(base_name, "_seg_", spatial_radius, "_", spectral_radius, "_", min_density, ".tif"))
+  return(paste0(out_file_dir, base_name, "_seg_SR", spatial_radius, "_RR", spectral_radius, "_MD", min_density, ".tif"))
 }
