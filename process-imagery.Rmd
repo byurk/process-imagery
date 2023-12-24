@@ -24,6 +24,9 @@ source("src/calculate-texture.R")
 source("src/meanshift-segmentation.R")
 ```
 
+## Layers
+
+We want combinations of approximately the following layers.
 
 rgb_seg_SR6_RR4.5_MD30_hsv_1 +
 hsv_2 +
@@ -71,7 +74,8 @@ cl <- new_cluster(6) |>
 ## File Paths of 50 Photographs
 
 ```{r}
-file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 83, 1))) 
+file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 34, 1))) 
+file_paths
 ```
 
 
@@ -92,7 +96,7 @@ segment_out <- segment_parameters |>
   partition(cl) |>
   mutate(outpath = parallel_image_segmentation(inpath, spatial_radius,
                                                range_radius, min_density,
-                                               do_computation = FALSE, over_write = FALSE)) |>
+                                               do_computation = TRUE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
   collect()
 segment_out 
@@ -117,7 +121,7 @@ color_parameters_total <- rbind(color_parameters_segment, color_parameters)
 color_out <- color_parameters_total |>
   mutate(inpath_exists = file.exists(inpath)) |>
   rowwise() |>
-  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
+  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
   ungroup() |>
   mutate(outpath_exists = file.exists(outpath))
 
@@ -149,7 +153,7 @@ texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   partition(cl) |>
   mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
-                                                do_computation = FALSE, over_write = FALSE)) |>
+                                                do_computation = TRUE, over_write = FALSE)) |>
   collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out

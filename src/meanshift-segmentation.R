@@ -44,7 +44,7 @@ parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min
       pmap(.f = segmentation_outpath) |>
       unlist() |>
       file.exists() |>
-      Negate(identify)
+      Negate(identity)
   }
   args <-
     list(inpaths,
