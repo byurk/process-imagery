@@ -20,8 +20,17 @@ get_color_space <- function(out_path) {
 
 color_outpath <- function(inpath, transform) {
   out_dir <- get_file_directory(inpath)
-  out_name <- str_split(transform, "to", simplify=TRUE)[1, 2] |> tolower() |> paste0(".tif")
-  return(paste0(out_dir, out_name))
+  color_space_from <- get_color_space(inpath)
+  
+  out_name <- str_split(transform, "to", simplify=TRUE)[1, 2]  |>
+    tolower() 
+    paste0()
+  
+  # Only append the color space if the transform does not come from rgb
+  include_previous_names <- grepl("rgb.tif", inpath, fixed = TRUE)
+  names_to_prepend <- ifelse(include_previous_names,"", paste0( color_space_from,"_"))
+    
+  return(paste0(out_dir, names_to_prepend, out_name,".tif"))
 }
 
 get_layer_name <- function(im_path) {

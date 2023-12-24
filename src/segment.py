@@ -23,7 +23,7 @@ def segment(image_path, spatial_radius = 6 , spectral_range_radius = 4.5, min_de
         #Segment the image
         (segmented_image, labels_image, number_regions) = pms.segment(original_image,
                                                                     spatial_radius = int(spatial_radius),
-                                                                    spectral_range_radius = float(spectral_range_radius),
+                                                                    range_radius = float(spectral_range_radius),
                                                                     min_density = int(min_density))
         #Using CV2 to write the image
         cv2.imwrite(out_path, segmented_image)
@@ -31,7 +31,7 @@ def segment(image_path, spatial_radius = 6 , spectral_range_radius = 4.5, min_de
         
     return out_path
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    out_path = segment(image_path = sys.argv[1],
 #                                   spatial_radius = sys.argv[2],
 #                                   spectral_range_radius=sys.argv[3],

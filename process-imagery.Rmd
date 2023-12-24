@@ -8,7 +8,7 @@ output: html_document
 
 ## Load packages
 
-```{r}
+```{r, echo = FALSE, results = "hide", message=FALSE, echo = FALSE}
 library(tidyverse)
 library(multidplyr)
 library(stringr)
@@ -24,6 +24,22 @@ source("src/calculate-texture.R")
 source("src/meanshift-segmentation.R")
 ```
 
+
+rgb_seg_SR6_RR4.5_MD30_hsv_1 +
+hsv_2 +
+rgb_seg_SR6_RR4.5_MD70_hsv_2 +
+yuv_contrast_L1_W11 +
+hsv_contrast_L2_W11 +
+hsv_contrast_L3_W11 +
+lab_contrast_L1_W11 +
+yuv_contrast_L2_W11 +
+rgb_seg_SR6_RR4.5_MD70_lab_3 +
+rgb_seg_SR6_RR7.5_MD50_2 +
+rgb_seg_SR6_RR7.5_MD30_yuv_1 +
+rgb_seg_SR3_RR4.5_MD50_hsv_1 + #adding back in some 'redundant' layers
+rgb_seg_SR6_RR7.5_MD70_hsv_1 +
+rgb_seg_SR3_RR4.5_MD30_hsv_2 +
+rgb_seg_SR3_RR7.5_MD50_hsv_2,
 
 ## Set up Cluster
 
@@ -51,71 +67,22 @@ cl <- new_cluster(6) |>
 ```
 
 
-## File Paths of 50 photographs
+
+## File Paths of 50 Photographs
 
 ```{r}
 file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 83, 1))) 
 ```
 
 
-## Color Space Transformations
-
-```{r}
-color_transform_functions <- tibble(transform = c("RGBtoLab", "RGBtoYUV","RGBtoHSL"))
-color_parameters <- file_paths |> 
-  cross_join(color_transform_functions)
-
-color_out <- color_parameters |>
-  mutate(inpath_exists = file.exists(inpath)) |>
-  rowwise() |>
-  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
-  ungroup() |>
-  mutate(outpath_exists = file.exists(outpath))
-color_out
-```
-
-
-
-## Texture Calculations
-
-```{r}
-texture_windows <- tibble(window = c(11L)) 
-texture_layers <- tibble(layer = c(3L))
-texture_stats <- tibble(statistic = c("contrast"))
-
-texture_parameters <- color_out |>
-  dplyr::select(outpath) |>
-  rename(inpath = outpath) |>
-  dplyr::select(inpath) |>
-  cross_join(texture_windows) |> 
-  cross_join(texture_stats) |>
-  cross_join(texture_layers)
-
-texture_out <- texture_parameters |>
-  mutate(inpath_exists = file.exists(inpath)) |>
- partition(cl) |>
-  mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
-                                                 do_computation = FALSE, over_write = FALSE)) |>
-    collect() |>
-  mutate(outpath_exists = file.exists(outpath)) 
-texture_out
-```
-
-
-
 ## Image Segmentation
 
 ```{r}
-segment_spatial <- tibble(spatial_radius = c(3, 6))
+segment_spatial <- tibble(spatial_radius = c(3,6))
 segment_spectral <-tibble(range_radius = c(4.5, 7.5))
 segment_denisty <-tibble(min_density = c(30, 50, 70))
 
-# segment_parameters <- color_out |>
-#   filter(transform == "RGBtoHSV" | transform == "RGBtoLab") |>
-#   dplyr::select(outpath) |>
-#   rename(inpath = outpath) 
-
-segment_parameters <- dplyr::tibble(inpath = file_paths[[1]]) |>
+segment_parameters <- dplyr::tibble(inpath = file_paths$inpath) |>
   cross_join(segment_spatial) |> 
   cross_join(segment_spectral) |>
   cross_join(segment_denisty)
@@ -130,4 +97,64 @@ segment_out <- segment_parameters |>
   collect()
 segment_out 
 ```
+
+
+## Color Space Transformations
+
+```{r}
+color_transform_functions <- tibble(transform = c("RGBtoLab", "RGBtoYUV","RGBtoHSL"))
+
+color_parameters <- file_paths |> 
+  cross_join(color_transform_functions)
+
+color_parameters_segment <- segment_out |>
+  dplyr::select(outpath) |>
+  rename(inpath = outpath)|> 
+  cross_join(color_transform_functions)
+
+color_parameters_total <- rbind(color_parameters_segment, color_parameters)
+
+color_out <- color_parameters_total |>
+  mutate(inpath_exists = file.exists(inpath)) |>
+  rowwise() |>
+  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
+  ungroup() |>
+  mutate(outpath_exists = file.exists(outpath))
+
+color_out
+```
+
+
+## Texture Calculations
+
+```{r}
+texture_windows <- tibble(window = c(5L,11L)) 
+texture_layers <- tibble(layer = c(3L))
+texture_stats <- tibble(statistic = c("contrast"))
+
+
+
+texture_parameters <- color_out |>
+  dplyr::select(outpath) |>
+  rename(inpath = outpath) |>
+  dplyr::select(inpath) |>
+  rowwise() |>
+  filter(grepl("/yuv.tif|/hsv.tif|/lab.tif", inpath)) |>
+  ungroup() |>
+  cross_join(texture_windows) |> 
+  cross_join(texture_stats) |>
+  cross_join(texture_layers)
+
+texture_out <- texture_parameters |>
+  mutate(inpath_exists = file.exists(inpath)) |>
+  partition(cl) |>
+  mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
+                                                do_computation = FALSE, over_write = FALSE)) |>
+  collect() |>
+  mutate(outpath_exists = file.exists(outpath)) 
+texture_out
+```
+
+
+
 

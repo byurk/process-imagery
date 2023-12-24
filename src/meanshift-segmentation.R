@@ -32,7 +32,7 @@ source_python("src/segment.py")
 #' @export
 parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min_densities, do_computation = FALSE, over_write = FALSE, python_environment_path = "/usr/bin/python3"){
   
-  #Need to set the environment here because in multidplyr the environment is not copied
+  #Need to set the environment here because in multidplyr the environment is not copied between clusters
   Sys.setenv(RETICULATE_PYTHON = python_environment_path)
   source_python("src/segment.py")
   
