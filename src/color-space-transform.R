@@ -107,7 +107,7 @@ parallel_color_transforms <- function(inpaths, transforms, do_computation = FALS
 
   do_computation_vector <- rep(do_computation, length(inpaths))
 
-  if(!over_write & do_computation_vector){
+  if(!over_write & do_computation){
     out_paths <- list(inpaths, transforms) |>
       pmap(.f = color_outpath) |>
       unlist() 

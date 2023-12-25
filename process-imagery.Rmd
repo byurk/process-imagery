@@ -48,7 +48,7 @@ rgb_seg_SR3_RR7.5_MD50_hsv_2,
 
 ```{r Cluster setup}
 
-cl <- new_cluster(6) |>
+cl <- new_cluster(10) |>
   cluster_library("tidyverse") |>
   cluster_library("terra") |>
   cluster_library("stringr") |>
@@ -57,6 +57,7 @@ cl <- new_cluster(6) |>
   cluster_library("raster") |>
   cluster_library("reticulate") |>
   cluster_copy("color_transform") |>
+  cluster_copy("get_color_space") |>
   cluster_copy("calculate_texture") |>
   cluster_copy("get_file_directory") |>
   cluster_copy("get_file_name") |>
@@ -74,7 +75,7 @@ cl <- new_cluster(6) |>
 ## File Paths of 50 Photographs
 
 ```{r Read in file paths}
-file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 34, 1))) 
+file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 83, 1))) 
 file_paths
 ```
 
@@ -97,7 +98,7 @@ segment_out <- segment_parameters |>
   partition(cl) |>
   mutate(outpath = parallel_image_segmentation(inpath, spatial_radius,
                                                range_radius, min_density,
-                                               do_computation = TRUE, over_write = FALSE)) |>
+                                               do_computation = FALSE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
   collect()
 segment_out 
@@ -107,7 +108,6 @@ segment_out
 ## Color Space Transformations
 
 ```{r Colorspace transformations}
-
 color_transform_functions <- tibble(transform = c("RGBtoLab", "RGBtoYUV","RGBtoHSL"))
 
 color_parameters <- file_paths |> 
@@ -122,10 +122,10 @@ color_parameters_total <- rbind(color_parameters_segment, color_parameters)
 
 color_out <- color_parameters_total |>
   mutate(inpath_exists = file.exists(inpath)) |>
-  rowwise() |>
-  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
-  ungroup() |>
-  mutate(outpath_exists = file.exists(outpath))
+  partition(cl) |>
+  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
+  mutate(outpath_exists = file.exists(outpath)) |>
+  collect()
 
 color_out
 ```
@@ -154,7 +154,7 @@ texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   partition(cl) |>
   mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
-                                                do_computation = TRUE, over_write = FALSE)) |>
+                                                do_computation = FALSE, over_write = FALSE)) |>
   collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
