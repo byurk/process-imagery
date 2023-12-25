@@ -1,6 +1,7 @@
 library(stringr)
 library(terra)
-library(GLCMTextures)
+library(raster)
+library(glcm)
 library(tictoc)
 source("src/file-utilities.R")
 
@@ -24,7 +25,7 @@ source("src/file-utilities.R")
 #' result_path <- calculate_texture(inpath, window = 5, statistic = "glcm_contrast", layer = 1)
 #'
 #' @export
-calculate_texture <- function(inpath, window = 5, statistic = "glcm_contrast", layer = 1L, do_computation = TRUE) {
+calculate_texture <- function(inpath, window = 5, statistic = "contrast", layer = 1L, do_computation = TRUE) {
   #Texture Path to Write
   out_path <- texture_outpath(inpath, window, statistic, layer)
   
@@ -36,18 +37,16 @@ calculate_texture <- function(inpath, window = 5, statistic = "glcm_contrast", l
   if (do_computation) {
     
     raster <-  inpath |>
-      terra::rast(lyrs = layer)
+      raster::raster(band = layer)
     
-    contrast <- glcm_textures(
+    texture <- glcm(
       raster,
-      metrics = statistic,
-      w = c(window, window),
-      n_levels = 16,
+      statistics = statistic,
+      window = c(window, window),
       shift = list(c(0, 1), c(1, 1), c(1, 0), c(1, -1)),
-      quantization = "equal prob"
     )
     
-    terra::writeRaster(filename = out_path,
+    terra::writeRaster(texture, filename = out_path,
                        format = "GTiff",
                        overwrite = TRUE)
   }
@@ -97,4 +96,7 @@ parallel_texture_calculation <- function(inpaths, windows, statistics, layers, d
     pmap(.f = calculate_texture) |>
     unlist()
 }
+
+
+
 
