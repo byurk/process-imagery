@@ -87,7 +87,7 @@ color_transform <- function(inpath, transform = "RGBtoHSV", do_computation = TRU
 #'
 #' @param inpaths A vector of strings representing the file paths of the images to be transformed.
 #' @param transforms A vector of strings representing the color transformations to be applied.
-#' @param do_computation Logical or Logical vector; if TRUE, the function performs the computation 
+#' @param do_computation Logical; if TRUE, the function performs the computation 
 #'                      of color transformations. Defaults to FALSE.
 #' @param over_write Logical; if TRUE, the function will overwrite any existing files 
 #'                  with the same name as the output files. Defaults to FALSE.
@@ -119,7 +119,3 @@ parallel_color_transforms <- function(inpaths, transforms, do_computation = FALS
     pmap(.f = color_transform) |>
     unlist()
 }
-
-
-
-
