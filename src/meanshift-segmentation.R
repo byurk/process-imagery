@@ -51,3 +51,14 @@ parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min
     pmap(.f = segment) |>
     unlist()
 }
+
+# R wrapper for python function
+segment_image <- function(inpath, spatial_radius = 4, range_radius = 5, min_density = 20, do_computation = TRUE, python_environment_path = "/usr/bin/python3"){
+  #Need to set the environment here because in multidplyr the environment is not copied between clusters
+  Sys.setenv(RETICULATE_PYTHON = python_environment_path)
+  source_python("src/segment.py")
+  
+  outpath <- segment(inpath, spatial_radius, range_radius, min_density, do_computation)
+  
+  return(outpath)
+}
