@@ -134,7 +134,6 @@ color_out
 ## Texture Calculations
 
 ```{r Texture calculations}
-
 texture_windows <- tibble(window = c(5L,11L)) 
 texture_layers <- tibble(layer = c(3L))
 texture_stats <- tibble(statistic = c("contrast"))
@@ -143,9 +142,7 @@ texture_parameters <- color_out |>
   dplyr::select(outpath) |>
   rename(inpath = outpath) |>
   dplyr::select(inpath) |>
-  rowwise() |>
   filter(grepl("/yuv.tif|/hsv.tif|/lab.tif", inpath)) |>
-  ungroup() |>
   cross_join(texture_windows) |> 
   cross_join(texture_stats) |>
   cross_join(texture_layers)
@@ -159,7 +156,5 @@ texture_out <- texture_parameters |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
 ```
-
-
 
 

@@ -45,7 +45,7 @@ plotRGB(rgb_segmented)
 Images can be transformed into various color spaces such as HSV, LAB, YUV, which may help machine learning algorithms recogonize patterns.  
 
 ```{r}
-hsv_segmented_path <- color_tranform(rgb_segmented_path, tranform = 'RGBtoHSV')
+hsv_segmented_path <- color_transform(rgb_segmented_path, transform = 'RGBtoHSV')
 hsv_segmented <- terra::rast(hsv_segmented_path) 
 
 plotRGB(hsv_segmented)
@@ -62,7 +62,7 @@ Edges of objects can be recognized using texture measurements from the Gray Leve
 hsv_contrast_path <- calculate_texture(hsv_segmented_path, window = 5, statistic = "contrast", layer = 1L, do_computation = TRUE)
 hsv_contrast <- terra::rast(hsv_contrast_path)
 
-plotRGB(hsv_contrast)
+hsv_contrast
 ```
 
 
