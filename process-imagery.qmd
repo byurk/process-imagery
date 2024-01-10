@@ -2,7 +2,11 @@
 title: "Process Imagery"
 author: "Jackson Krebsbach"
 date: "1/9/2024"
-output: html_document
+format: 
+  html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true
 ---
 
 
@@ -98,7 +102,7 @@ segment_out <- segment_parameters |>
   partition(cl) |>
   mutate(outpath = parallel_image_segmentation(inpath, spatial_radius,
                                                range_radius, min_density,
-                                               do_computation = TRUE, over_write = FALSE)) |>
+                                               do_computation = FALSE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
   collect()
 segment_out 
@@ -123,7 +127,7 @@ color_parameters_total <- rbind(color_parameters_segment, color_parameters)
 color_out <- color_parameters_total |>
   mutate(inpath_exists = file.exists(inpath)) |>
   partition(cl) |>
-  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
+  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = FALSE, over_write = FALSE)) |>
   mutate(outpath_exists = file.exists(outpath)) |>
   collect()
 
@@ -151,7 +155,7 @@ texture_out <- texture_parameters |>
   mutate(inpath_exists = file.exists(inpath)) |>
   partition(cl) |>
   mutate(outpath = parallel_texture_calculation(inpath, window, statistic, layer,
-                                                do_computation = TRUE, over_write = FALSE)) |>
+                                                do_computation = FALSE, over_write = FALSE)) |>
   collect() |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
