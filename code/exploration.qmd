@@ -1,0 +1,69 @@
+---
+title: "exploration"
+output: html_document
+date: "2023-12-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Load Packages, message = FALSE, warn = FALSE}
+library(tidyverse)
+library(terra)
+source('src/calculate-texture.R')
+source('src/color-space-transform.R')
+source('src/meanshift-segmentation.R')
+```
+
+
+## Read in image
+
+Read in the original image to generate features from. This image was taken on an iPhone and has 3 channels: red, green, and blue.
+
+```{r Look at RGB image}
+rgb_path <- 'clean_data/quadrats/quadrat34/rgb.tif'
+rgb <- terra::rast(rgb_path)
+
+plotRGB(rgb)
+```
+
+
+## Image segmentation
+
+The first technique we perform is image segmentation using https://github.com/fjean/pymeanshift. 
+
+```{r}
+rgb_segmented_path <- segment_image(rgb_path, spatial_radius = 6, range_radius = 4.5, min_density = 50)
+rgb_segmented <- terra::rast(rgb_segmented_path)
+
+plotRGB(rgb_segmented)
+```
+## Color space transformations
+
+Images can be transformed into various color spaces such as HSV, LAB, YUV, which may help machine learning algorithms recogonize patterns.  
+
+```{r}
+hsv_segmented_path <- color_transform(rgb_segmented_path, transform = 'RGBtoHSV')
+hsv_segmented <- terra::rast(hsv_segmented_path) 
+
+plotRGB(hsv_segmented)
+```
+
+
+
+
+## Texture calculation
+
+Edges of objects can be recognized using texture measurements from the Gray Level Co-Occurence matrix.
+
+```{r}
+hsv_contrast_path <- calculate_texture(hsv_segmented_path, window = 5, statistic = "contrast", layer = 1L, do_computation = TRUE)
+hsv_contrast <- terra::rast(hsv_contrast_path)
+
+hsv_contrast
+```
+
+
+
