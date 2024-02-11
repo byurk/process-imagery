@@ -4,7 +4,7 @@ library(reticulate)
 #   RETICULATE_PYTHON = '/usr/bin/python3'
 # )
 
-source_python("code/src/segment.py")
+source_python("src/segment.py")
 
 #' Parallel Image Segmentation Function
 #'
