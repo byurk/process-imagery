@@ -1,10 +1,10 @@
 library(reticulate)
 
-Sys.setenv(
-  RETICULATE_PYTHON = '/usr/bin/python3'
-)
+# Sys.setenv(
+#   RETICULATE_PYTHON = '/usr/bin/python3'
+# )
 
-source_python("src/segment.py")
+source_python("code/src/segment.py")
 
 #' Parallel Image Segmentation Function
 #'
@@ -33,7 +33,7 @@ source_python("src/segment.py")
 parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min_densities, do_computation = FALSE, over_write = FALSE, python_environment_path = "/usr/bin/python3"){
   
   #Need to set the environment here because in multidplyr the environment is not copied between clusters
-  Sys.setenv(RETICULATE_PYTHON = python_environment_path)
+  #Sys.setenv(RETICULATE_PYTHON = python_environment_path)
   source_python("src/segment.py")
   
   do_computation_vector <- rep(do_computation, length(inpaths))
