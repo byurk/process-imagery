@@ -21,10 +21,10 @@ library(reticulate)
 ## Source image processing functions
 
 ```{r, echo = FALSE, results = "hide", message=FALSE, echo = FALSE}
-source("src/file-utilities.R")
-source("src/color-space-transform.R")
-source("src/calculate-texture.R")
-source("src/meanshift-segmentation.R")
+source("code/src/file-utilities.R")
+source("code/src/color-space-transform.R")
+source("code/src/calculate-texture.R")
+source("code/src/meanshift-segmentation.R")
 ```
 
 ## Layers

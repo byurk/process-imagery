@@ -1,5 +1,6 @@
 project:
   title: "process imagery"
+  execute-dir: project
 
 editor: visual
 
