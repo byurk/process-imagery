@@ -19,7 +19,7 @@ install.packages("renv")
 library(renv)
 ```
 
-4.  Run the command `renv::restore()` to install the project dependencies.
+4.  Run the command `renv::init()` to install the project dependencies. If this is your first time setting up the project you will want to select option 1: Restore the project from the lockfile.
 
 Done! Now you should be able to run the code in the project.
 
