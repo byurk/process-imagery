@@ -3,7 +3,7 @@ library(terra)
 library(raster)
 library(glcm)
 library(tictoc)
-source("src/file-utilities.R")
+source("code/src/file-utilities.R")
 
 #' Calculate Texture Function
 #'
