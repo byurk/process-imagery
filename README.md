@@ -61,7 +61,7 @@ The project is organized into the following directories:
 
 You should either create the raw_data, clean_data, and outputs directories and/or create symlinks to these directories (probably somewhere on google drive).
 
-Currently the \*\_data and outputs folders are located at `epsilon.hope.edu:/media/DataSSD1/data/process-imagery/`.
+Currently the \*\_data and outputs folders are located at `epsilon.hope.edu:/media/DataSSD1/data/process-imagery/`. There is a corresponding [google drive folder](https://drive.google.com/drive/u/1/folders/1JjEJP3AFmPqS1FXrk8XQ5duAeXRuezp-).
 
 ## Workflow for processing the ground based images for the dune project at Saugatuck Harbor Natural Area (SHNA)
 
