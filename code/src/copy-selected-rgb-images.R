@@ -6,11 +6,12 @@ library(terra)
 
 in_directory <- 'raw_data/quadrats'
 out_directory <- 'clean_data/quadrats'
-csv_path <-  "clean_data/selected_image_key.csv"
+#csv_path <-  "clean_data/selected_image_key.csv"
+csv_path <-  "raw_data/selected_image_key.csv"
 
 
 selected_images <- read_csv(csv_path) |>
-  mutate(quadrat_number = row_number() + 33) |>
+  #mutate(quadrat_number = row_number() + 33) |>
   mutate(selected_image_path = glue('{in_directory}/quadrat{quadrat_number}/image_selection/{content}')) |>
   mutate(out_directory = glue('{out_directory}/quadrat{quadrat_number}'))
 

@@ -59,23 +59,29 @@ The project is organized into the following directories:
 
 4.  outputs - Contains the output of the analysis used to take on future projects.
 
-You should either create the raw_data, clean_data, and outputs directories and/or create symlinks to these directories (probably somewhere ongoogle drive).
+You should either create the raw_data, clean_data, and outputs directories and/or create symlinks to these directories (probably somewhere on google drive).
+
+Currently the \*\_data and outputs folders are located at `epsilon.hope.edu:/media/DataSSD1/data/process-imagery/`.
 
 ## Workflow for processing the ground based images for the dune project at Saugatuck Harbor Natural Area (SHNA)
 
-1.  The photos were captured with the Trimble iPhone app with associated GPS coordinates. The raw data was downloaded and stored in Google drive. For each quadrat \~3 photographs were taken to be used in subsequent analysis. This data is located in `raw_data/veg_Quadrats`.
+> **Yurk testing notes (April 2024)** - I did not test steps 1-4 since these are pretty specific to how we collected photographs for this flight - Typically we would need to have some process (usually simpler) that would result in one rgb image being added to each `clean_data/quadrats/quadrat##/` directory - Jack followed the steps 1-4 on epsilon to get the images ready for processing - I lightly modified the code to locate the selected_images_key.csv file in the `raw_data` directory instead of the `clean_data` directory. I also simplified the csv file so that it now has a column with the quadrat_number (using our current numbering system) and no longer has a column showing the path to the folder containing the images. This path was pointing at one of Jack's google drive folders, which is no longer used.
 
-2.  First run the script `code/src/organize-ground-photos.R` to organize the raw data. This script will create a directory for each quadrat and store the associated photographs and metadata inside `raw_data`.
+1.  The photos were captured with the Trimble iPhone app with associated GPS coordinates. For each quadrat \~3 photographs were taken to be used in subsequent analysis. This data is located in `raw_data/veg_Quadrats`.
 
-3.  Next, you will have to manually look at the photographs and decide which ones to keep. Create a csv file with the decided photograph. This should be `iphone1`, `iphone2`,or `iphone3` for each quadrat. The csv file should be stored in the `clean_data` directory.
+2.  First run the script `code/src/organize-ground-images.R` to organize the raw data. This script will create a directory for each quadrat and store the associated photographs and metadata inside `raw_data`. These directories are stored in `raw_data/quadrats/` and are named `quadrat##` where `##` is the quadrat number. The script also converts each photograph to tiff format. The tiffs are stored in the directory `raw_data/quadrats/quadrat##/image_selection/`. Typically there are 3 photos of each quadrat, `iphone1.tif`, `iphone2.tif`, and `iphone3.tif`.
 
-4.  Run the script `code/src/copy-selected-rgb-images.R` to copy the selected photographs to the `clean_data` directory.
+3.  Next, you will have to manually look at the photographs and decide which ones to use from each quadrat. Create a csv file with the decided photograph. This should be `iphone1`, `iphone2`,or `iphone3` for each quadrat. The csv file is stored in the `raw_data` directory: `raw_data/selected_images_key.csv`. The file lists the quadrat number and the file name of the selected image.
+
+4.  Run the script `code/src/copy-selected-rgb-images.R` to copy the selected photographs to the `clean_data` directory. For example, the image selected for quadrat 79 will have the path `clean_data/quadrats/quadrat79/rgb.tif`
 
 5.  Decide which hyperparameters to use for the image processing.
 
 6.  Render the quarto document or run code cells of `code/process-imagery.qmd` to process the images.
 
 Main entry points:
+
+> **Yurk testing notes (April 2024)** - I rendered `code/exploration.qmd`. Everything seemed to work fine.
 
 ### 1. exploration.qmd
 
