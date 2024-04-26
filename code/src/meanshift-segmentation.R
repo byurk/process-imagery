@@ -34,7 +34,7 @@ parallel_image_segmentation <- function(inpaths, spatial_radii, range_radii, min
   
   #Need to set the environment here because in multidplyr the environment is not copied between clusters
   #Sys.setenv(RETICULATE_PYTHON = python_environment_path)
-  source_python("src/segment.py")
+  source_python("code/src/segment.py")
   
   do_computation_vector <- rep(do_computation, length(inpaths))
   
