@@ -119,7 +119,7 @@ color_out
 
 ```{r Texture calculations}
 texture_windows <- tibble(window = c(5L,11L)) 
-texture_layers <- tibble(layer = c(3L))
+texture_layers <- tibble(layer = c(1L,2L,3L))
 texture_stats <- tibble(statistic = c("contrast"))
 
 texture_parameters <- file_paths |> # include the rgb images
