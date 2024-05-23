@@ -1,3 +1,4 @@
+/clean_data_master
 /clean_data
 /raw_data
 /outputs
@@ -15,3 +16,4 @@ code/.DS_Store
 /code/reports/
 /.secrets
 *.log
+process-imagery-output.txt

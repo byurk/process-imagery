@@ -9,7 +9,9 @@ format:
     code-fold: true
 ---
 
+
 ## Load packages
+
 
 ```{r, echo = FALSE, results = "hide", message=FALSE, echo = FALSE}
 library(tidyverse)
@@ -18,7 +20,9 @@ library(stringr)
 library(reticulate)
 ```
 
+
 ## Source image processing functions
+
 
 ```{r, echo = FALSE, results = "hide", message=FALSE, echo = FALSE}
 source("code/src/file-utilities.R")
@@ -27,6 +31,7 @@ source("code/src/calculate-texture.R")
 source("code/src/meanshift-segmentation.R")
 ```
 
+
 ## Layers
 
 We want combinations of approximately the following layers.
@@ -34,6 +39,7 @@ We want combinations of approximately the following layers.
 rgb_seg_SR6_RR4.5_MD30_hsv_1 + hsv_2 + rgb_seg_SR6_RR4.5_MD70_hsv_2 + yuv_contrast_L1_W11 + hsv_contrast_L2_W11 + hsv_contrast_L3_W11 + lab_contrast_L1_W11 + yuv_contrast_L2_W11 + rgb_seg_SR6_RR4.5_MD70_lab_3 + rgb_seg_SR6_RR7.5_MD50_2 + rgb_seg_SR6_RR7.5_MD30_yuv_1 + rgb_seg_SR3_RR4.5_MD50_hsv_1 + #adding back in some 'redundant' layers rgb_seg_SR6_RR7.5_MD70_hsv_1 + rgb_seg_SR3_RR4.5_MD30_hsv_2 + rgb_seg_SR3_RR7.5_MD50_hsv_2,
 
 ## Set up Cluster
+
 
 ```{r Cluster setup}
 
@@ -59,14 +65,18 @@ cl <- new_cluster(8) |>
   cluster_copy("parallel_image_segmentation")
 ```
 
+
 ## File Paths of 50 Photographs
+
 
 ```{r Read in file paths}
 file_paths <-  tibble(inpath= sprintf("clean_data/quadrats/quadrat%02d/rgb.tif", seq(34, 83, 1))) 
 file_paths
 ```
 
+
 ## Image Segmentation
+
 
 ```{r Image Segmentation}
 
@@ -90,7 +100,9 @@ segment_out <- segment_parameters |>
 segment_out 
 ```
 
+
 ## Color Space TransformationsFALSE
+
 
 ```{r Colorspace transformations}
 color_transform_functions <- tibble(transform = c("RGBtoLab", "RGBtoYUV","RGBtoHSL","RGBtoHSV"))
@@ -115,7 +127,9 @@ color_out <- color_parameters_total |>
 color_out
 ```
 
+
 ## Texture Calculations
+
 
 ```{r Texture calculations}
 texture_windows <- tibble(window = c(5L,11L)) 
@@ -146,3 +160,4 @@ texture_out <- texture_parameters |>
   mutate(outpath_exists = file.exists(outpath)) 
 texture_out
 ```
+
