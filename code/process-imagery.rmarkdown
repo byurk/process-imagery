@@ -145,7 +145,7 @@ texture_parameters <- color_out |>
   dplyr::select(outpath) |>
   rename(inpath = outpath) |>
   dplyr::select(inpath) |>
-  filter(grepl("/yuv.tif|/hsv.tif|/lab.tif/hsl.tif", inpath)) |>
+  filter(grepl("/yuv.tif|/hsv.tif|/lab.tif|/hsl.tif", inpath)) |>
   cross_join(texture_windows) |> 
   cross_join(texture_stats) |>
   cross_join(texture_layers) |>
