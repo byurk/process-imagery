@@ -11,6 +11,7 @@ code/.DS_Store
 *.html
 *_files/
 .Rhistory
+.RData
 *.ini
 /.quarto/
 /code/reports/
