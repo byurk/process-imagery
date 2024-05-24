@@ -12,6 +12,7 @@ code/.DS_Store
 *_files/
 .Rhistory
 .RData
+*.rmarkdown
 *.ini
 /.quarto/
 /code/reports/
