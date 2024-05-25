@@ -107,10 +107,17 @@ color_parameters_total <- rbind(color_parameters_segment, color_parameters)
 
 color_out <- color_parameters_total |>
   mutate(inpath_exists = file.exists(inpath)) |>
+  rowwise() |>
   partition(cl) |>
-  mutate(outpath = parallel_color_transforms(inpath, transform, do_computation = TRUE, over_write = FALSE)) |>
-  mutate(outpath_exists = file.exists(outpath)) |>
-  collect()
+  mutate(
+    result = list(parallel_color_transforms(list(inpath), list(transform), do_computation = TRUE, over_write = FALSE)[[1]]),
+    outpath = result$outpath,
+    outpath_exists = file.exists(outpath),
+    error_message = result$error,
+  ) |>
+  ungroup() |>
+  dplyr::select(-result) |>
+  collect() 
 
 color_out
 ```

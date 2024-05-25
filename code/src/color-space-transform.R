@@ -29,52 +29,55 @@ source("code/src/file-utilities.R")
 #' color_transforms_function(file_paths, transformations, do_computation = TRUE, over_write = FALSE)
 #'
 #' @export
-
 color_transform <- function(inpath, transform = "RGBtoHSV", do_computation = TRUE) {
-  
-  #Get Path to Write
-  out_path <- color_outpath(inpath, transform)
-  color_space <- get_color_space(out_path)
-  
-  if(!file.exists(inpath)){ do_computation <- FALSE; message(paste0(inpath, " does not exist")) }
-  
-  if (do_computation) {
-    # read in image with imager
-    image <- inpath |>
-      magick::image_read() |>
-      imager::magick2cimg()
+  tryCatch({
+    # Get Path to Write
+    out_path <- color_outpath(inpath, transform)
+    color_space <- get_color_space(out_path)
     
-    # get transform from environment
-    color_transform <- transform |>
-      get()
+    if(!file.exists(inpath)) { 
+      stop(paste0(inpath, " does not exist")) 
+    }
     
-    # do transform and normalize variables
-    rast <- image |>
-      color_transform() |>
-      drop() |>
-      as.array() |>
-      terra::rast() |>
-      terra::t() |>
-      terra::stretch()
-    
-    names(rast) <- paste0(color_space, "_", seq(terra::nlyr(rast)))
-    
-    rast[is.na(rast)] <- 254
-    rast[is.nan(rast)] <- 254
-    rast[rast == 255] <- 254
-    NAflag(rast) <- 255
-    
-    terra::writeRaster(
-      x = rast,
-      filename = out_path,
-      datatype = "INT1U",
-      overwrite = TRUE
-    )
-    
-    rm(rast)
-  }
-  # return the written file path
-  return(out_path)
+    if (do_computation) {
+      # read in image with imager
+      image <- inpath |>
+        magick::image_read() |>
+        imager::magick2cimg()
+      
+      # get transform from environment
+      color_transform <- transform |>
+        get()
+      
+      # do transform and normalize variables
+      rast <- image |>
+        color_transform() |>
+        drop() |>
+        as.array() |>
+        terra::rast() |>
+        terra::t() |>
+        terra::stretch()
+      
+      names(rast) <- paste0(color_space, "_", seq(terra::nlyr(rast)))
+      
+      rast[is.na(rast)] <- 254
+      rast[is.nan(rast)] <- 254
+      rast[rast == 255] <- 254
+      NAflag(rast) <- 255
+      
+      terra::writeRaster(
+        x = rast,
+        filename = out_path,
+        datatype = "INT1U",
+        overwrite = TRUE
+      )
+      
+      rm(rast)
+    }
+    return(list(outpath = out_path, error = NA_character_)) # No error
+  }, error = function(e) {
+    return(list(outpath = out_path, error = e$message))
+  })
 }
 
 #' Parallel Color Transforms Function
@@ -104,18 +107,24 @@ color_transform <- function(inpath, transform = "RGBtoHSV", do_computation = TRU
 #'
 #' @export
 parallel_color_transforms <- function(inpaths, transforms, do_computation = FALSE, over_write = FALSE){
-
+  
   do_computation_vector <- rep(do_computation, length(inpaths))
-
-  if(!over_write & do_computation){
+  
+  if (!over_write & do_computation) {
     out_paths <- list(inpaths, transforms) |>
       pmap(.f = color_outpath) |>
-      unlist() 
-      
-     do_computation_vector <- !file.exists(out_paths)
+      unlist()
+    
+    do_computation_vector <- !file.exists(out_paths)
   }
+  
   args <- list(inpaths, transforms, do_computation_vector)
-  args |>
-    pmap(.f = color_transform) |>
-    unlist()
+  
+  results <- args |>
+    pmap(.f = function(inpath, transform, do_computation) {
+      result <- color_transform(inpath, transform, do_computation)
+      return(result)
+    })
+  
+  return(results)
 }
