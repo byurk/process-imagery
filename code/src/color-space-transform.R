@@ -106,7 +106,15 @@ color_transform <- function(inpath, transform = "RGBtoHSV", do_computation = TRU
 #'                                     do_computation = TRUE, over_write = FALSE)
 #'
 #' @export
-parallel_color_transforms <- function(inpaths, transforms, do_computation = FALSE, over_write = FALSE){
+parallel_color_transforms <- function(inpaths, transforms, do_computation = FALSE, over_write = FALSE) {
+  
+  # Check if inpaths and transforms are lists, convert if not
+  # if (!is.list(inpaths)) {
+  #   inpaths <- list(inpaths)
+  # }
+  # if (!is.list(transforms)) {
+  #   transforms <- list(transforms)
+  # }
   
   do_computation_vector <- rep(do_computation, length(inpaths))
   
@@ -122,8 +130,7 @@ parallel_color_transforms <- function(inpaths, transforms, do_computation = FALS
   
   results <- args |>
     pmap(.f = function(inpath, transform, do_computation) {
-      result <- color_transform(inpath, transform, do_computation)
-      return(result)
+      return(color_transform(inpath, transform, do_computation))
     })
   
   return(results)
